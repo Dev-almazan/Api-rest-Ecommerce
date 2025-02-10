@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "title": "Rines",
+    "description": "paquete de 4 rines de aluminio ",
+    "code": "PDONF-234",
+    "price": 1801,
+    "status": true,
+    "stock": 0,
+    "category": "",
+    "thumbnail": []
+  },
+  {
+    "id": 2,
+    "title": "Rines",
+    "description": "paquete de 4 rines de aluminio ",
+    "code": "PDONF-234",
+    "price": 1801,
+    "status": true,
+    "stock": 0,
+    "category": "",
+    "thumbnail": []
+  }
+]

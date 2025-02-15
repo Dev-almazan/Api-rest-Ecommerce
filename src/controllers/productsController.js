@@ -23,6 +23,7 @@ class productsController {
             res.status(404).send({ 'status': 'error', 'results': 0, 'message': 'Producto no encontrado' })  
     }
 
+
      createProduct(req, res) {
         //validamos la solicitud
         if (Object.keys(req.body).length !== 0) {
@@ -72,10 +73,10 @@ class productsController {
             const productosActualizados = JSON.stringify(dataActualizada, null, 2); // damos el formato requerido
             if (fileManager.writeFilesJson('./src/data/products.json', productosActualizados, res)) //ejecutamos metodo que sobrescribira el archivo con los productosActualizadosz m{}
             {
-                res.status(200).send({ 'status': 'error', 'message': 'Producto Eliminado Correctamente' })
+               return res.status(200).send({ 'status': 'error', 'message': 'Producto Eliminado Correctamente' })
             }
         }
-        res.status(404).send({ 'status': 'error', 'message': 'Producto no encontrado' })
+        return res.status(404).send({ 'status': 'error', 'message': 'Producto no encontrado' })
     }
 
 }

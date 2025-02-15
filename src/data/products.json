@@ -1,24 +1,28 @@
 [
   {
     "id": 1,
-    "title": "Rines",
-    "description": "paquete de 4 rines de aluminio ",
+    "title": "LLanta Sumitomo HTR",
+    "description": "Paquete de 4 llantas ",
     "code": "PDONF-234",
-    "price": 1801,
+    "price": 2900,
     "status": true,
-    "stock": 0,
-    "category": "",
-    "thumbnail": []
+    "stock": 10,
+    "category": "LLantas",
+    "thumbnail": [
+      "https://dev-almazan-ecommerce.netlify.app/static/media/8.a3de730ddb879e669182.png"
+    ]
   },
   {
-    "id": 2,
-    "title": "Rines",
-    "description": "paquete de 4 rines de aluminio ",
-    "code": "PDONF-234",
-    "price": 1801,
+    "id": 4,
+    "title": "LLanta Michelin ",
+    "description": "Llanta Continental 205/55 R16 MICHELIN",
+    "code": "91V",
+    "price": "2500",
     "status": true,
     "stock": 0,
-    "category": "",
-    "thumbnail": []
+    "category": "LLantas",
+    "thumbnail": [
+      "https://dev-almazan-ecommerce.netlify.app/static/media/6.e186d27e28a0b6d14bd8.png"
+    ]
   }
 ]

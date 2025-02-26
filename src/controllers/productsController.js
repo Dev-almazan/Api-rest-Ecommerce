@@ -1,82 +1,96 @@
 
 
-import fileManager from "../manager/filesManager.js";
-import Products from "../utils/products.js";
-
+import productsModel from "../models/products.js";
 class productsController {
 
-     getProductsAll(req,res){
-        const data =  fileManager.readFileJson('./src/data/products.json',res); 
-        data.length > 0 ? 
-        res.status(200).send({ 'status': 'success', 'results': data.length, 'data': data }) :
-        res.status(404).send({ 'status': 'error', 'results': 0, 'message': 'No hay productos disponibles' })  
-    }
-
-     getProduct(req,res){
-        const productId = req.params.pid  ;
-        const data =  fileManager.readFileJson('./src/data/products.json', res); 
-        const dataFilter = data.filter(result => result.id == productId )
-        if(dataFilter.length > 0)
+    async createProduct(req, res) {
+        if (Object.keys(req.body).length === 0) // Validamos la solicitud
         {
-            res.status(200).send({ 'status': 'success', 'results': 1, 'data': [dataFilter[0]] })  
+            return res.status(404).send({ 'status': 'error', 'message': 'Favor de completar propiedades del producto' });
         }
-            res.status(404).send({ 'status': 'error', 'results': 0, 'message': 'Producto no encontrado' })  
-    }
-
-
-     createProduct(req, res) {
-        //validamos la solicitud
-        if (Object.keys(req.body).length !== 0) {
-            //desestructuramos cuerpo de la solicitud
-            const { title = '',description = '',code = '',price = 0,status = true,stock = 0,category = '', thumbnail = []  } = req.body;
-            let data =  fileManager.readFileJson('./src/data/products.json', res); //obtenemos los datos del archivo
-            const producto = new Products(Products.getNextId(data), title, description, code, price, status, stock, category, thumbnail); //creamos un nuevo objeto producto con su id autoincremntal
-            data.push(producto) //agregamos nuevo producto al array que contiene los productos del archivo
-            if ( fileManager.writeFilesJson('./src/data/products.json', JSON.stringify(data, null, 2),res)) //ejecutamos metodo que sobrescribira el archivo con los productosActualizadosz m{}
-            {
-                res.status(201).send({ 'status': 'success', 'message': 'Producto Agregado Correctamente' })
+        try {
+            const data = req.body;
+            let result = await productsModel.insert(data);// Ejecutamos el método que guardará el producto
+            if (result) {
+                return res.status(201).send({ 'status': 'success', 'message': 'Se añadió un nuevo producto' });
+            } else {
+                return res.status(400).send({ 'status': 'error', 'message': 'Hubo un problema al añadir el producto' });
             }
+        } catch (e) {
+            console.log(e)
+            return res.status(400).send({ 'status': 'error', 'message': e });
         }
-        res.status(404).send({ 'status': 'error', 'message': 'Favor de completar propiedades del producto' })
     }
 
 
-    updateProduct(req, res) {
-        const productId = req.params.pid;
-        const data = fileManager.readFileJson('./src/data/products.json', res);   //obtenemos los datos del archivo
-        const valorBuscado = data.filter(result => result.id == productId); //validamos si existe el Idproducto 
-        if (valorBuscado.length > 0) {
-            if (Object.keys(req.body).length !== 0) {
-                //desestructuramos cuerpo de la solicitud
-                const { title = '', description = '', code = '', price = 0, status = true, stock = 0, category = '', thumbnail = [] } = req.body;
-                let dataActualizada = data.filter(result => result.id !== valorBuscado[0].id); //buscamos los productos sin contemplar el id
-                const producto = new Products(valorBuscado[0].id, title, description, code, price, status, stock, category, thumbnail); //creamos un nuevo objeto producto con las propi
-                dataActualizada.push(producto) //agregamos nuevo producto al array que contiene los productos del archivo
-                if (fileManager.writeFilesJson('./src/data/products.json', JSON.stringify(dataActualizada, null, 2), res)) //ejecutamos metodo que sobrescribira el archivo con los productosActualizadosz m{}
+    async getProductsAll(req,res){
+        try {
+            let result = await productsModel.findAll();// Ejecutamos método que obtendra  productos
+            if (result.length > 0) {
+                return res.status(200).send({ 'status': 'success', 'results': result.length, 'data': result }) 
+            } else {
+                return res.status(404).send({ 'status': 'error', 'results': 0, 'message': 'No hay productos disponibles' }) 
+            }
+        } catch (e) {
+            console.log(e)
+            return res.status(400).send({ 'status': 'error', 'message': e });
+        }
+    }
+
+    async getProduct(req,res){
+        try {
+            const productId = req.params.pid;
+            let result = await productsModel.find(productId);// Ejecutamos método que obtendra  productos
+            if (result) {
+                return res.status(200).send({ 'status': 'success', 'results': result.length, 'data': result })
+            } 
+        } catch (e) {
+            console.log(e)
+            return res.status(404).send({ 'status': 'error', 'results': 0, 'message': 'No se encontro producto' })
+        }
+    }
+
+
+    async updateProduct(req, res) {
+        try {
+            const productId = req.params.pid;
+            let search = await productsModel.find(productId);// Ejecutamos método que busca el producto 
+            const id_product = search._id.toString(); //obtenemos el id del product
+            if (search) //si encuentra el producto
+            {
+                if (Object.keys(req.body).length === 0) // Validamos que el body no venga vacio
                 {
-                    res.status(201).send({ 'status': 'success', 'message': 'Producto Actualizado Correctamente' })
+                    return res.status(404).send({ 'status': 'error', 'message': 'Favor de completar propiedades del producto' });
+                }
+                const data = req.body;
+                let result = await productsModel.update(id_product,data)  //procedemos a actualizar propiedades del producto
+                if (result) {
+                    return res.status(200).send({ 'status': 'success', 'message': 'El producto ha sido actualizado' })
+                } else {
+                    return res.status(400).send({ 'status': 'error', 'results': 0, 'message': 'Hubo un problema al actualizar el producto' })
                 }
             }
-            res.status(404).send({ 'status': 'error', 'message': 'Favor de completar propiedades del producto' })
-            
+        } catch (e) {
+          
+            return res.status(404).send({ 'status': 'error', 'results': 0, 'message': 'No se encontro producto' })
         }
-        res.status(404).send({ 'status': 'error', 'message': 'Producto no encontrado' })
     }
 
 
-    deleteProduct(req, res) {
-        const productId = req.params.pid;
-        const data = fileManager.readFileJson('./src/data/products.json', res);   //obtenemos los datos del archivo
-        const valorBuscado = data.filter(result => result.id == productId); //validamos si existe el producto 
-        if (valorBuscado.length > 0) {
-            const dataActualizada = data.filter(result => result.id !== valorBuscado[0].id); //buscamos los productos sin contemplar el id
-            const productosActualizados = JSON.stringify(dataActualizada, null, 2); // damos el formato requerido
-            if (fileManager.writeFilesJson('./src/data/products.json', productosActualizados, res)) //ejecutamos metodo que sobrescribira el archivo con los productosActualizadosz m{}
-            {
-               return res.status(200).send({ 'status': 'error', 'message': 'Producto Eliminado Correctamente' })
+   async deleteProduct(req, res) {
+        try {
+            const productId = req.params.pid;
+            let result = await productsModel.delete(productId);// Ejecutamos método que eliminara productos
+            if (result.deletedCount === 0) {
+                return res.status(404).send({ 'status': 'success', 'message': 'Error al eliminar producto : Validar ID','results': result.length, 'data': result })
             }
+            else{
+                return res.status(200).send({ 'status': 'success', 'message': 'Producto eliminado Correctamente', 'results': result.length, 'data': result })
+            }
+        } catch (e) {
+            console.log(e)
+            return res.status(404).send({ 'status': 'error', 'results': 0, 'message': e })
         }
-        return res.status(404).send({ 'status': 'error', 'message': 'Producto no encontrado' })
     }
 
 }

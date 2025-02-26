@@ -16,6 +16,7 @@
     "apirestproducts": "file:",
     "express": "^4.21.2",
     "express-handlebars": "^8.0.1",
+    "mongoose": "^8.10.2",
     "nodemon": "^3.1.9",
     "socket.io": "^4.8.1"
   }

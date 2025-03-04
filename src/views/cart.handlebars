@@ -1,0 +1,40 @@
+
+<section class="sec-products" >
+    <div class="container">
+        <h1 class="text-center mt-4 mb-4">Productos<span class="badge badge-primary text-primary">Del carrito {{cartId}}</span></h1>
+        <div class="row col-md-12 productos" id="products">
+           
+            {{#each productsInCart}}
+            <div class="col-lg-3 col-md-6 mt-4">
+                <div class="card shadow p-3 bg-body rounded" style="min-height:25rem;">
+
+                
+                    <!-- Imagen del producto -->
+                    <img class="card-img-top"
+                        src="{{#if this.product.thumbnail.[0]}}{{this.product.thumbnail.[0]}}{{else}}https://static.vecteezy.com/system/resources/previews/004/141/669/non_2x/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg{{/if}}"
+                        alt="{{this.product.title}}">
+            
+                    <!-- Cuerpo de la tarjeta -->
+                    <div class="card-body">
+                        <!-- ID del producto -->
+                        <div class="text-center card-title text-gray mb-2">
+                            <h5>{{this.product.title}}</h5>
+                            <h5>Cantidad : {{this.quantity}}</h5>
+                        </div>
+                        <a href="/products/{{this.product._id}}" class="d-grid gap-2 btn btn-primary">
+                            Ver detalles
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+            
+        </div>
+               
+    </div>
+</section>
+
+
+
+
+

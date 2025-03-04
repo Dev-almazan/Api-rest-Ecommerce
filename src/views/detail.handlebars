@@ -1,0 +1,46 @@
+
+<section class="sec-products" >
+    <div class="container">
+        <div class="row col-md-12 productos card shadow rounded" id="products">
+            {{#each docs}}
+                    <div class="row col-md-12 p-4" >
+                        <div class="col-md-6">
+                            <img class="img-principal" style="width: 100%; max-heigth:100px;" src="{{#if this.thumbnail.[0]}}{{this.thumbnail.[0]}}{{else}}https://static.vecteezy.com/system/resources/previews/004/141/669/non_2x/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg{{/if}}"
+                                            alt="{{this.title}}">
+                        </div>
+                        <div class="col-md-6">
+                            <h1 class="text-center">{{this.title}} </h1>
+            
+                            <div class="text-left">
+                                <h4>Precio </h4>
+                                <h2 class="text-primary"><b>${{this.price}}</b></h2>
+                            </div>
+                            <div class="text-left">
+                                <h4>Modelo</h4>
+                                <p>{{this.code}} </p>
+                            </div>
+                            <div class="text-left">
+                                <h4>Descripción</h4>
+                                <p>{{this.description}} </p>
+                            </div>
+                            <div class="text-left">
+                                <h4>Categoria</h4>
+                                <p>{{this.category}} </p>
+                            </div><a href="./" class="btn btn-outline-primary">Regresar <svg stroke="currentColor" fill="currentColor"
+                                    stroke-width="0" viewBox="0 0 16 16" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M1.146 4.854a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H12.5A2.5 2.5 0 0 1 15 6.5v8a.5.5 0 0 1-1 0v-8A1.5 1.5 0 0 0 12.5 5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4z">
+                                    </path>
+                                </svg></a>
+                        </div>
+                    </div>
+            {{/each}}
+        </div>
+    </div>
+</section>
+
+
+
+
+
+

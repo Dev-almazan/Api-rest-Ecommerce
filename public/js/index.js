@@ -28,6 +28,7 @@ const eliminarProducto=(id)=>
 
 
 const renderProducts = (values) => {
+  console.log(values)
   const resultsContainer = document.getElementById('products')
   resultsContainer.innerHTML = ''; 
     values.forEach(item => {

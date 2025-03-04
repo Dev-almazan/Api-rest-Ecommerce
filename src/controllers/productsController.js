@@ -25,9 +25,36 @@ class productsController {
 
     async getProductsAll(req,res){
         try {
-            let result = await productsModel.findAll();// Ejecutamos método que obtendra  productos
-            if (result.length > 0) {
-                return res.status(200).send({ 'status': 'success', 'results': result.length, 'data': result }) 
+
+            //1- configuramos parametros de la paginacion
+            const { limit = 10, page = 1, sort  , query } = req.query;
+            const orden = sort == 'asc' ? 1 : -1; 
+            const options = { page: page, // page param
+                limit: limit, //limit param
+                sort: sort ? { price: orden } : {} // si existe el parametro sort ordenar por price
+            };
+            // Filtro por categoria o stock
+            const filter = query ? {
+                $or: [
+                    { category: query }, // Filtro por categoría
+                    { status: query === 'true' ? true : query === 'false' ? false : null } // Filtro por status
+                ]
+            } : {};
+            //2- Ejecutamos método que obtendra productos de acuerdo a los parametrosa de la paginacion
+            let result = await productsModel.findAll(filter,options);
+            if (result.docs.length > 0) {
+                const url = req.protocol + '://' + req.get('host') + '/api/products/';
+                return res.status(200).send({
+                    'status': 'success', 'results': result.docs.length, 'playload': result.docs, 
+                    'totalPages': result.totalPages,
+                    'prevPage': result.prevPage,
+                    'nextPage': result.nextPage,
+                    'page': result.page,
+                    'hasPrevPage': result.hasPrevPage,
+                    'hasNextPage': result.hasNextPage,
+                    'prevLink': result.prevPage ? `${url}?page=${result.prevPage}` : null,
+                    'nextLink': result.nextPage  ? `${url}?page=${result.nextPage}` : null
+                }) 
             } else {
                 return res.status(404).send({ 'status': 'error', 'results': 0, 'message': 'No hay productos disponibles' }) 
             }
@@ -41,9 +68,10 @@ class productsController {
         try {
             const productId = req.params.pid;
             let result = await productsModel.find(productId);// Ejecutamos método que obtendra  productos
-            if (result) {
-                return res.status(200).send({ 'status': 'success', 'results': result.length, 'data': result })
+            if (!result) {
+                return res.status(404).send({ 'status': 'error', 'results': 0, 'message': 'Producto no encontrado' })
             } 
+            return res.status(200).send({ 'status': 'success', 'playload': result })
         } catch (e) {
             console.log(e)
             return res.status(404).send({ 'status': 'error', 'results': 0, 'message': 'No se encontro producto' })

@@ -1,6 +1,5 @@
 
-// Importa la función getProducts
-import productsController from '../controllers/productsController.js';
+
 
 class WebS{
     
@@ -49,7 +48,7 @@ class WebS{
                     let response = await fetch('http://localhost:8080/api/products/')
                     let values = await response.json();
                     if (values.results > 0) {
-                        io.emit('renderInterfaz', values.data);
+                        io.emit('renderInterfaz', values.playload);
                     }
                 }
                 getProducts();

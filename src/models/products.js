@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import paginate from "mongoose-paginate-v2";
 
 class productsModel {
     constructor(collection) {
@@ -11,11 +11,12 @@ class productsModel {
             description: { type: String },
             code: { type: String },
             price: { type: Number }, 
+            stock : { type: Number },
             status: { type: Boolean, default: true },
             category: { type: String },
             thumbnail: { type: Array, required: false }
         });
-
+        
         // Añadir un middleware para autoincrementar el id
         this.schema.pre('save', async function (next) {
             if (this.isNew) { // Solo se ejecuta si el documento es nuevo
@@ -29,6 +30,7 @@ class productsModel {
             next();
         });
 
+        this.schema.plugin(paginate);
         this.execute = mongoose.model(collection,this.schema);
         this.connect();
     }
@@ -60,9 +62,9 @@ class productsModel {
         }
     }
 
-    async findAll() {
+    async findAll(filter,options) {
         try {
-            const result = await this.execute.find();
+            const result = await this.execute.paginate(filter,options);
             if (result) {
                 return result;
             } else {
@@ -74,17 +76,24 @@ class productsModel {
         }
     }
 
-    async find(id) {
+  
+
+    async find(idC) {
         try {
-            const result = await this.execute.findOne({ 'id': id });
-            if (result) {
-                return result;
+            let query;
+
+            if (mongoose.Types.ObjectId.isValid(idC)) {
+                // Si es un ObjectId válido, busca por _id
+                query = { _id: new mongoose.Types.ObjectId(idC) };
             } else {
-                throw new Error('Error al obtener producto');
+                // Si no es un ObjectId válido, busca por id
+                query = { id: idC };
             }
+            // Ejecutar la consulta
+            const result = await this.execute.findOne(query);
+            return result;
         } catch (err) {
-           
-            throw new Error('Error al ejecutar find');
+            throw new Error('Error al ejecutar find product');
         }
     }
 
@@ -126,3 +135,4 @@ class productsModel {
 }
 
 export default new productsModel('products');
+
